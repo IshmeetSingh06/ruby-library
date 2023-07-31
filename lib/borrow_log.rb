@@ -3,9 +3,9 @@ class BorrowLog
   attr_accessor :user_id, :book_id, :borrow_time, :return_time
   
   def initialize(user_id, book_id, borrow_time, return_time = nil)
-    @user_id = user_id
-    @book_id = book_id
-    @borrow_time = borrow_time
-    @return_time = return_time
+    self.user_id = user_id
+    self.book_id = book_id
+    self.borrow_time = borrow_time
+    self.return_time = return_time
   end
 end

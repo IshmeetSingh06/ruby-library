@@ -3,10 +3,10 @@ class User
   attr_accessor :username, :password, :first_name, :last_name, :admin
 
   def initialize(username, password, first_name, last_name = nil, admin = false)
-    @username= username
-    @password= password
-    @first_name= first_name
-    @last_name= last_name.empty? ? nil : last_name # Last name can be left epmty
-    @admin = admin 
+    self.username= username
+    self.password= password
+    self.first_name= first_name
+    self.last_name= last_name.empty? ? nil : last_name
+    self.admin = admin 
   end
 end

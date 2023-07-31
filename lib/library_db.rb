@@ -9,8 +9,8 @@ class LibraryDB
         password: ENV['PG_DATABASE_PASSWORD'],
         port: ENV['PG_DATABASE_PORT']
       )
-    rescue PG:Error => error
-      puts "An error occurred while connecting to postgres : #{e.message}"
+    rescue PG::Error => error
+      puts "An error occurred while connecting to postgres : #{error.message}"
     else
       puts "Successfully connected to postgres"
     ensure

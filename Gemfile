@@ -6,3 +6,5 @@ gem "pg"
 gem "rspec"
 gem "simplecov"
 gem "bcrypt"
+
+gem "dotenv"

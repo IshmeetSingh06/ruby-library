@@ -2,12 +2,21 @@ class LibraryDB
   attr_accessor :conn
 
   def initialize
-     self.conn = PG.connect(
-      dbname: 'postgres',
-      user: ENV['PG_DATABASE_USERNAME'],
-      password: ENV['PG_DATABASE_PASSWORD'],
-      port: ENV['PG_DATABASE_PORT']
-    )
+    begin
+      self.conn = PG.connect(
+        dbname: 'postgres',
+        user: ENV['PG_DATABASE_USERNAME'],
+        password: ENV['PG_DATABASE_PASSWORD'],
+        port: ENV['PG_DATABASE_PORT']
+      )
+    rescue PG:Error => error
+      puts "An error occurred while connecting to postgres : #{e.message}"
+    else
+      puts "Successfully connected to postgres"
+    ensure
+      puts "-----------------------------------------"
+    end
+
     initialize_tables
     initialize_admin_account
   end

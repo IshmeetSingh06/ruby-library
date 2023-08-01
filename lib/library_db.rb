@@ -10,7 +10,9 @@ class LibraryDB
         port: ENV['PG_DATABASE_PORT']
       )
     rescue PG::Error => error
-      puts "An error occurred while connecting to postgres : #{error.message}"
+      puts "An error occurred while connecting to postgres :\n #{error.message}"
+      puts "Exiting the application.................."
+      exit(false)
     else
       puts "Successfully connected to postgres"
     ensure

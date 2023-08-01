@@ -6,7 +6,7 @@ class User
     self.username = username
     self.password = password
     self.first_name = first_name
-    self.last_name = last_name unless last_name.nil? || last_name.empty?
+    self.last_name = last_name
     self.admin = admin
   end
 end

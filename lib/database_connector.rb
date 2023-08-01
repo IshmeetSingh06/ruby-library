@@ -5,15 +5,15 @@ class DatabaseConnector
     begin
       self.conn = PG.connect(
         dbname: 'postgres',
-        user: ENV['PG_DATABASE_USERNAME'],
-        password: ENV['PG_DATABASE_PASSWORD'],
-        port: ENV['PG_DATABASE_PORT']
+        user: ENV['DATABASE_USERNAME'],
+        password: ENV['DATABASE_PASSWORD'],
+        port: ENV['DATABASE_PORT']
       )
     rescue PG::ConnectionBad => error
       puts "An error occurred while connecting to postgres :\n #{error.message}"
       exit(1)
     rescue PG::ServerError => error
-      puts "Server Error"
+      puts "Server Error :\n #{error.message}"
       puts "Exiting the application.................."
       exit(1)
     else
@@ -67,16 +67,16 @@ class DatabaseConnector
   private def initialize_admin_account
     return if admin_account_exists?
 
-    hashed_password = BCrypt::Password.create(ENV['PG_ADMIN_PASSWORD'])
+    hashed_password = BCrypt::Password.create(ENV['LIBRARY_ADMIN_PASSWORD'])
 
     @conn.exec_params(
       'INSERT INTO users (username, password, first_name, admin) VALUES ($1, $2, $3, $4)',
-      ['admin@library', hashed_password, 'admin', true]
+      [ENV['LIBRARY_ADMIN_USERNAME'], hashed_password, 'admin', true]
     )
   end
 
   private def admin_account_exists?
-    result = self.conn.exec_params('SELECT username FROM users WHERE username = $1',[ENV['PG_ADMIN_USERNAME']])
-    result[0]['username'] == ENV['PG_ADMIN_USERNAME']
+    result = self.conn.exec_params('SELECT admin FROM users WHERE username = $1',[ENV['LIBRARY_ADMIN_USERNAME']])
+    result[0]['admin']
   end
 end

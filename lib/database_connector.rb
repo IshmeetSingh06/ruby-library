@@ -1,4 +1,4 @@
-class LibraryDB
+class DatabaseConnector
   attr_accessor :conn
 
   def initialize
@@ -9,10 +9,13 @@ class LibraryDB
         password: ENV['PG_DATABASE_PASSWORD'],
         port: ENV['PG_DATABASE_PORT']
       )
-    rescue PG::Error => error
+    rescue PG::ConnectionBad => error
       puts "An error occurred while connecting to postgres :\n #{error.message}"
+      exit(1)
+    rescue PG::ServerError => error
+      puts "Server Error"
       puts "Exiting the application.................."
-      exit(false)
+      exit(1)
     else
       puts "Successfully connected to postgres"
     ensure
@@ -64,7 +67,7 @@ class LibraryDB
   private def initialize_admin_account
     return if admin_account_exists?
 
-    hashed_password = BCrypt::Password.create('admin@123')
+    hashed_password = BCrypt::Password.create(ENV['PG_ADMIN_PASSWORD'])
 
     @conn.exec_params(
       'INSERT INTO users (username, password, first_name, admin) VALUES ($1, $2, $3, $4)',
@@ -73,7 +76,7 @@ class LibraryDB
   end
 
   private def admin_account_exists?
-    result = self.conn.exec_params('SELECT EXISTS (SELECT 1 FROM users WHERE username = $1)',['admin@library'])
-    result[0]['exists'] == 't'
+    result = self.conn.exec_params('SELECT username FROM users WHERE username = $1',[ENV['PG_ADMIN_USERNAME']])
+    result[0]['username'] == ENV['PG_ADMIN_USERNAME']
   end
 end

@@ -2,7 +2,7 @@ class LibraryApp
   attr_accessor :db
 
   def initialize
-    self.db = LibraryDB.new
+    self.db = DatabaseConnector.new
   end
 
   def start

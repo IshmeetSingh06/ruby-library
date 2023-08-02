@@ -1,5 +1,5 @@
 class LibraryApp
-  attr_accessor :current_user, :user_controller
+  attr_accessor :current_user, :user_controller, :book_controller
 
   def initialize
     self.current_user = nil

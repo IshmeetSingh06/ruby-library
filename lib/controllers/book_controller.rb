@@ -1,7 +1,7 @@
-class BookController < DatabaseConnector
+class BookController
   attr_accessor :db
 
-  def initialize
-    self.db = DatabaseConnector.conn
+  def initialize(connection)
+    self.db = connection
   end
 end

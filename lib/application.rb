@@ -1,10 +1,10 @@
-class LibraryApp
-  attr_accessor :current_user, :user_controller, :book_controller
+class Application
+  attr_accessor :current_user, :user_controller, :admin_screen
 
-  def initialize
+  def initialize(connection)
     self.current_user = nil
-    self.user_controller = UserController.new
-    self.book_controller = BookController.new
+    self.user_controller = UserController.new(connection)
+    self.admin_screen = AdminScreen.new(connection)
   end
 
   def start
@@ -60,7 +60,7 @@ class LibraryApp
       puts "Login successful! Welcome, #{user['first_name']}!"
       current_user = user
 
-      admin_menu if current_user['admin']
+      admin_screen.admin_menu(current_user) if current_user['admin']
       main_menu if not current_user['admin']
     else
       puts "Invalid username or password. Please try again."
@@ -112,109 +112,5 @@ class LibraryApp
 
     # TODO: Implement menu for normal user
     main_menu
-  end
-
-  def admin_menu
-    display_welcome_message
-    choice = 0
-    while choice != 5
-      puts "Admin Menu"
-      puts "1. Add a New Book"
-      puts "2. Restock a Book"
-      puts "3. Soft Delete a Book"
-      puts "4. Show All Books"
-      puts "5. Logout"
-      puts "6. Exit"
-      print "Enter your choice: "
-
-      choice = gets.chomp.to_i
-
-      display_welcome_message
-      case choice
-      when 1
-        add_new_book
-      when 2
-        restock_book
-      when 3
-        soft_delete_book
-      when 4
-        #TODO: show all available books
-      when 5
-        @current_user = nil
-        puts "Logged out successfully!\n"
-        break
-      when 6
-        puts "Goodbye! Exiting the Library Management System."
-        exit(0)
-      else
-        puts "Invalid choice. Please try again."
-      end
-    end
-  end
-
-  def add_new_book
-    puts "Add a New Book"
-    puts "-----------------------------------------"
-    print "Enter title : "
-    title = gets.chomp
-    print "Enter genre : "
-    genre = gets.chomp
-    print "Enter author : "
-    author = gets.chomp
-    print "Enter publish date (dd/mm/yyyy, press enter if unknown) : "
-    publish_date = gets.chomp
-
-    # TODO: Implement adding a new book to the inventory
-    puts "New book '#{title}' has been added to the inventory."
-    puts "Press enter to go back to the admin menu."
-    gets
-  end
-
-  def restock_book
-    puts "Restock a Book"
-    puts "-----------------------------------------"
-    print "Enter the id of the book you want to restock : "
-    book_id = gets.chomp.to_i
-
-    book = book_controller.get_book_by_id(book_id)
-
-    if book.nil?
-      puts "Book with ID #{book_id} not found."
-    else
-      print "Enter the quantity to add : "
-      quantity_to_add = gets.chomp.to_i
-
-      if quantity_to_add <= 0
-        puts "Quantity must be a positive number."
-      else
-        # TODO: Implement restocking the book
-        new_count = book['count'] + quantity_to_add
-        book_controller.update_book_count(book_id, new_count)
-
-        puts "Book '#{book['title']}' has been restocked."
-      end
-    end
-
-    puts "Press enter to go back to the admin menu."
-    gets
-  end
-
-  def soft_delete_book
-    puts "Delete a Book"
-    puts "-----------------------------------------"
-    print "Enter the id of the book you want to delete : "
-    book_id = gets.chomp.to_i
-
-    book = book_controller.get_book_by_id(book_id)
-
-    if book.nil?
-      puts "Book with ID #{book_id} not found."
-    else
-      # TODO: Implement soft deleting the book
-      puts "Book '#{book['title']}' has been soft deleted."
-    end
-
-    puts "Press enter to go back to the admin menu."
-    gets
   end
 end

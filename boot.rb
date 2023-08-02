@@ -5,12 +5,13 @@ require_relative 'lib/entities/book.rb'
 require_relative 'lib/entities/borrow_log.rb'
 require_relative 'lib/controllers/user_controller.rb'
 require_relative 'lib/controllers/book_controller.rb'
+require_relative 'lib/screens/admin_screen.rb'
 require 'dotenv/load'
 require 'pg'
 require 'date'
 require 'bcrypt'
 
 DatabaseConnector.connect
-app = LibraryApp.new
+app = Application.new(DatabaseConnector.conn)
 
 app.start

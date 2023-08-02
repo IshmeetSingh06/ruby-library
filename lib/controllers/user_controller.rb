@@ -1,8 +1,8 @@
-class UserController < DatabaseConnector
+class UserController
   attr_accessor :db
 
-  def initialize
-    self.db = DatabaseConnector.conn
+  def initialize(connection)
+    self.db = connection
   end
 
   def get_user_by_username(username)

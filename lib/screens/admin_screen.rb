@@ -56,15 +56,19 @@ class AdminScreen
     puts "Add a New Book"
     puts "-----------------------------------------"
     print "Enter title : "
-    title = gets.chomp
+    title = gets.chomp.strip
     print "Enter genre : "
-    genre = gets.chomp
+    genre = gets.chomp.strip
     print "Enter author : "
-    author = gets.chomp
-    print "Enter publish date (dd/mm/yyyy, press enter if unknown) : "
-    publish_date = gets.chomp
+    author = gets.chomp.strip
+    print "Enter publish date (dd/mm/yyyy) : "
+    publish_date_input = gets.chomp.strip
+    publish_date = Date.parse(publish_date_input)
+    print "Enter count : "
+    count = gets.chomp.to_i
 
-    # TODO: Implement adding a new book to the inventory
+    book_controller.create(title: title, genre: genre, author: author, publish_date: publish_date, count: count)
+
     puts "New book '#{title}' has been added to the inventory."
     puts "Press enter to go back to the admin menu."
     gets
@@ -76,7 +80,7 @@ class AdminScreen
     print "Enter the id of the book you want to restock : "
     book_id = gets.chomp.to_i
 
-    book = book_controller.get_book_by_id(book_id)
+    book = book_controller.find_by_id(book_id)
 
     if book.nil?
       puts "Book with ID #{book_id} not found."
@@ -87,11 +91,10 @@ class AdminScreen
       if quantity_to_add <= 0
         puts "Quantity must be a positive number."
       else
-        # TODO: Implement restocking the book
-        new_count = book['count'] + quantity_to_add
-        book_controller.update_book_count(book_id, new_count)
+        new_count = book['count'].to_i + quantity_to_add
+        book_controller.restock(book_id, new_count)
 
-        puts "Book '#{book['title']}' has been restocked."
+        puts "Book '#{book['title']}' has been restocked.\n"
       end
     end
 
@@ -105,12 +108,12 @@ class AdminScreen
     print "Enter the id of the book you want to delete : "
     book_id = gets.chomp.to_i
 
-    book = book_controller.get_book_by_id(book_id)
+    book = book_controller.find_by_id(book_id)
 
     if book.nil?
       puts "Book with ID #{book_id} not found."
     else
-      # TODO: Implement soft deleting the book
+      book_controller.soft_delete(book_id)
       puts "Book '#{book['title']}' has been soft deleted."
     end
 
@@ -119,21 +122,20 @@ class AdminScreen
   end
 
   def show_all_books
-    puts "Available Books:"
-    books = book_controller.get_available_books
+    puts "Available Books : "
+    books = book_controller.list_inventory
 
     if books.empty?
       puts "No books available in the inventory."
     else
-      puts "-----------------------------------"
-      puts "ID\tTitle\t\tGenre\tAuthor\tCount"
-      puts "-----------------------------------"
+      puts "----------------------------------------------------------------"
+      puts "ID\tTitle\tGenre\tAuthor\tPublish-Date\tCount"
+      puts "----------------------------------------------------------------"
       books.each do |book|
-        puts "#{book['id']}\t#{book['title']}\t#{book['genre']}\t#{book['author']}\t#{book['count']}"
+        puts "#{book['id']}\t#{book['title']}\t#{book['genre']}\t#{book['author']}\t#{book['publish_date']}\t#{book['count']}"
       end
-      puts "-----------------------------------"
+      puts "----------------------------------------------------------------"
     end
-
     puts "Press enter to go back to the main menu."
     gets
   end

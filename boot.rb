@@ -12,6 +12,6 @@ require 'date'
 require 'bcrypt'
 
 DatabaseConnector.connect
-app = Application.new(DatabaseConnector.conn)
+app = Application.new(DatabaseConnector.connection)
 
 app.start

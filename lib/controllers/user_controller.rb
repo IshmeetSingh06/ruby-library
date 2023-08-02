@@ -5,7 +5,7 @@ class UserController
     self.db = connection
   end
 
-  def get_user_by_username(username)
+  def find_by_username(username)
     begin
       result = db.exec_params('SELECT * FROM users WHERE username = $1', [username])
       result.first
@@ -14,7 +14,7 @@ class UserController
     end
   end
 
-  def create_user(user_data)
+  def create(user_data)
     begin
       result = db.exec_params('INSERT INTO users (username, password, first_name, last_name, admin) VALUES ($1, $2, $3, $4, $5) RETURNING *;', [user_data[:username], user_data[:password], user_data[:first_name], user_data[:last_name], false])
       result.first

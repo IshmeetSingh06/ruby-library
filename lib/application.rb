@@ -54,7 +54,7 @@ class Application
     print "Enter password : "
     password = gets.chomp
 
-    user = user_controller.get_user_by_username(username)
+    user = user_controller.find_by_username(username)
 
     if user && BCrypt::Password.new(user['password']) == password
       puts "Login successful! Welcome, #{user['first_name']}!"
@@ -77,7 +77,7 @@ class Application
       username = gets.chomp.strip
       if username.empty?
         puts "Username cannot be left empty. Please try again."
-      elsif user_controller.get_user_by_username(username)
+      elsif user_controller.find_by_username(username)
         puts "Username '#{username}' already exists. Please choose a different username."
       else
         break
@@ -103,7 +103,7 @@ class Application
     last_name = nil if last_name.empty?
 
     hashed_password = BCrypt::Password.create(password)
-    result = user_controller.create_user(username: username,password: hashed_password,first_name: first_name,last_name: last_name)
+    result = user_controller.create(username: username, password: hashed_password, first_name: first_name, last_name: last_name)
     puts "\nRegistration successful! Welcome, #{first_name}!"
     current_user = {
       :id => result['id'],

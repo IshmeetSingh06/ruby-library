@@ -1,10 +1,10 @@
 class Application
   attr_accessor :current_user, :user_controller, :admin_screen
 
-  def initialize(connection)
+  def initialize
     self.current_user = nil
-    self.user_controller = UserController.new(connection)
-    self.admin_screen = AdminScreen.new(connection)
+    self.user_controller = UserController.new
+    self.admin_screen = AdminScreen.new
   end
 
   def start

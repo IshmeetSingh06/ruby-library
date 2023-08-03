@@ -1,9 +1,9 @@
 class AdminScreen
   attr_accessor :current_user, :book_controller
 
-  def initialize(connection)
+  def initialize
     self.current_user = nil
-    self.book_controller = BookController.new(connection)
+    self.book_controller = BookController.new
   end
 
   def display_admin_message
@@ -67,7 +67,7 @@ class AdminScreen
     print "Enter count : "
     count = gets.chomp.to_i
 
-    book_controller.create(title: title, genre: genre, author: author, publish_date: publish_date, count: count)
+    book_controller.create({title: title, genre: genre, author: author, publish_date: publish_date, count: count})
 
     puts "New book '#{title}' has been added to the inventory."
     puts "Press enter to go back to the admin menu."
@@ -92,7 +92,7 @@ class AdminScreen
         puts "Quantity must be a positive number."
       else
         new_count = book['count'].to_i + quantity_to_add
-        book_controller.restock(book_id, new_count)
+        book_controller.restock(book, new_count)
 
         puts "Book '#{book['title']}' has been restocked.\n"
       end

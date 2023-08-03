@@ -1,5 +1,6 @@
 require_relative 'lib/application.rb'
 require_relative 'lib/database_connector.rb'
+require_relative 'lib/entities/base_entity.rb'
 require_relative 'lib/entities/user.rb'
 require_relative 'lib/entities/book.rb'
 require_relative 'lib/entities/borrow_log.rb'
@@ -12,6 +13,6 @@ require 'date'
 require 'bcrypt'
 
 DatabaseConnector.connect
-app = Application.new(DatabaseConnector.connection)
+app = Application.new
 
 app.start

@@ -75,15 +75,11 @@ class DatabaseConnector
     return if admin_account_exists?
 
     hashed_password = BCrypt::Password.create(ENV['LIBRARY_ADMIN_PASSWORD'])
-
-    @@connection.exec_params(
-      'INSERT INTO users (username, password, first_name, admin) VALUES ($1, $2, $3, $4)',
-      [ENV['LIBRARY_ADMIN_USERNAME'], hashed_password, 'admin', true]
-    )
+    UserController.create(username: ENV['LIBRARY_ADMIN_USERNAME'], password: hashed_password, first_name: 'admin', admin: true)
   end
 
   def self.admin_account_exists?
-    result = @@connection.exec_params('SELECT admin FROM users WHERE username = $1', [ENV['LIBRARY_ADMIN_USERNAME']])
-    result[0]['admin']
+    result = UserController.find_by_username(ENV['LIBRARY_ADMIN_USERNAME'])
+    result.admin
   end
 end

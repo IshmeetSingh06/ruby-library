@@ -1,9 +1,8 @@
 class Application
-  attr_accessor :current_user, :user_controller, :admin_screen
+  attr_accessor :current_user, :admin_screen
 
   def initialize
     self.current_user = nil
-    self.user_controller = UserController.new
     self.admin_screen = AdminScreen.new
   end
 
@@ -28,9 +27,7 @@ class Application
       puts "2. Register"
       puts "3. Exit"
       print "Please enter your choice : "
-
       choice = gets.chomp.to_i
-
       display_welcome_message
       case choice
       when 1
@@ -46,7 +43,9 @@ class Application
     end
   end
 
-  private def login_user
+  private
+
+  def login_user
     puts "Login"
     puts "-----------------------------------------"
     print "Enter username : "
@@ -54,14 +53,15 @@ class Application
     print "Enter password : "
     password = gets.chomp
 
-    user = user_controller.find_by_username(username)
-
-    if user && BCrypt::Password.new(user['password']) == password
-      puts "Login successful! Welcome, #{user['first_name']}!"
+    user = UserController.find_by_username(username)
+    if user && BCrypt::Password.new(user.password) == password
+      puts "Login successful! Welcome, #{user.first_name}!"
       current_user = user
-
-      admin_screen.admin_menu(current_user) if current_user['admin']
-      main_menu if not current_user['admin']
+      if current_user.admin
+        admin_screen.admin_menu(current_user)
+      else
+        main_menu
+      end
     else
       puts "Invalid username or password. Please try again."
     end
@@ -70,46 +70,20 @@ class Application
   def register_user
     puts "Register"
     puts "-----------------------------------------"
-    username, password, first_name, last_name = nil
-
-    loop do
-      print("Enter username : ")
-      username = gets.chomp.strip
-      if username.empty?
-        puts "Username cannot be left empty. Please try again."
-      elsif user_controller.find_by_username(username)
-        puts "Username '#{username}' already exists. Please choose a different username."
-      else
-        break
-      end
-    end
-
-    loop do
-      print("Enter password : ")
-      password = gets.chomp.strip
-      break unless password.empty?
-      puts "Password cannot be left empty. Please try again."
-    end
-
-    loop do
-      print("Enter first name : ")
-      first_name = gets.chomp.strip
-      break unless first_name.empty?
-      puts "First name cannot be left empty. Please try again."
-    end
-
-    print("Enter last name (press enter to skip) : ")
-    last_name = gets.chomp.strip
-    last_name = nil if last_name.empty?
-
+    username = UserHelper.parseUsername
+    password = UserHelper.parsePassword
+    first_name = UserHelper.parseFirstname
+    last_name = UserHelper.parseLastname
     hashed_password = BCrypt::Password.create(password)
-    result = user_controller.create(username: username, password: hashed_password, first_name: first_name, last_name: last_name)
-    puts "\nRegistration successful! Welcome, #{first_name}!"
-    current_user = {
-      :id => result['id'],
-      :username => result['username'],
-    }
 
+    result = UserController.create(username: username, password: hashed_password, first_name: first_name, last_name: last_name)
+    if !result.nil?
+      puts "\nRegistration successful! Welcome, #{first_name}!"
+      current_user = {
+        :id => result['id'],
+        :username => result['username'],
+      }
+    end
     # TODO: Implement menu for normal user
     main_menu
   end

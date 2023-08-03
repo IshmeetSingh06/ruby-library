@@ -1,25 +1,25 @@
 class BookController
-  def find_by_id(book_id)
+  def self.find_by_id(book_id)
     Book.find_by_id(book_id)
   end
 
-  def list_inventory
+  def self.list_inventory
     Book.list_inventory
   end
 
-  def list_available
+  def self.list_available
     Book.list_available
   end
 
-  def create(book_data)
+  def self.create(book_data)
     Book.new(book_data).create
   end
 
-  def restock(book_id, new_count)
-    Book.restock(book_id,new_count)
+  def self.restock(book, new_count)
+    book.restock(new_count, book.id)
   end
 
-  def soft_delete(book_id)
+  def self.soft_delete(book_id)
     Book.delete(book_id)
   end
 end

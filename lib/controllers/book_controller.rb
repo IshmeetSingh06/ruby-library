@@ -16,7 +16,8 @@ class BookController
   end
 
   def self.restock(book, new_count)
-    book.restock(new_count, book.id)
+    book.count = new_count
+    book.save
   end
 
   def self.soft_delete(book_id)

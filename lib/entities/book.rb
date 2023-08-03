@@ -12,10 +12,9 @@ class Book < BaseEntity
 
   def create
     begin
-      @@db.exec_params('INSERT INTO books (title, genre, author, publish_date, count) VALUES ($1, $2, $3, $4, $5) RETURNING *;', [title, genre, author, publish_date, count])
+      @@db.exec_params('INSERT INTO books (title, genre, author, publish_date, count) VALUES ($1, $2, $3, $4, $5);', [title, genre, author, publish_date, count])
     rescue PG::Error => e
       puts "Error occurred while creating book: #{e.message}"
-      nil
     end
   end
 
@@ -45,7 +44,7 @@ class Book < BaseEntity
     begin
       result = @@db.exec_params('SELECT * FROM books WHERE id = $1 AND NOT deleted;', [book_id]).first
       if result
-        Book.new(id: result['id'], title: result['title'], gener: result['genre'], author: result['author'], publish_date: result['publish_date'], count: result['count'])
+        Book.new(id: result['id'], title: result['title'], genre: result['genre'], author: result['author'], publish_date: result['publish_date'], count: result['count'])
       end
     rescue PG::Error => e
       puts "Error occurred while fetching book by ID: #{e.message}"
@@ -74,17 +73,17 @@ class Book < BaseEntity
     end
   end
 
-  def restock(book_id, new_count)
+  def save
     begin
-      @@db.exec_params('UPDATE books SET count = $1 WHERE id = $2 RETURNING *;', [new_count, book_id])
-    rescue PG::Error => e
-      puts "Error occurred while restocking book: #{e.message}"
+      @@db.exec_params('UPDATE books SET title = $1, genre = $2, author = $3, publish_date = $4, count = $5 WHERE id = $6;',[title, genre, author, publish_date, count, id])
+    rescue PG::Error=> e
+      puts "Error occurred while updating book: #{e.message}"
     end
   end
 
   def self.delete(book_id)
     begin
-      @@db.exec_params('UPDATE books SET deleted = true WHERE id = $1 RETURNING *;', [book_id])
+      @@db.exec_params('UPDATE books SET deleted = true WHERE id = $1;', [book_id])
     rescue PG::Error => e
       puts "Error occurred while soft deleting book: #{e.message}"
     end

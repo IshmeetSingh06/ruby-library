@@ -10,9 +10,19 @@ class User < BaseEntity
     self.admin = user_data[:admin] || false
   end
 
+  def admin?
+    admin == 't'
+  end
+
+  def valid_password?(password_to_check)
+    BCrypt::Password.new(password) == password_to_check
+  end
+
   def save
     begin
-      @@db.exec_params('INSERT INTO users (username, password, first_name, last_name, admin) VALUES ($1, $2, $3, $4, $5);', [username, password, first_name, last_name, false])
+      hashed_password = BCrypt::Password.create(password)
+      BaseEntity.db.exec_params('INSERT INTO users (username, password, first_name, last_name, admin) VALUES ($1, $2, $3, $4, $5);', [username, hashed_password, first_name, last_name, false])
+      self
     rescue PG::Error => error
       puts "Error occurred while creating user: #{error.message}"
     end
@@ -20,9 +30,9 @@ class User < BaseEntity
 
   def self.find_by_username(username)
     begin
-      result = db.exec_params('SELECT * FROM users WHERE username = $1', [username]).first
+      result = BaseEntity.db.exec_params('SELECT * FROM users WHERE username = $1', [username]).first
       if result
-        User.new(id: result['id'], username: result['username'], password: result['password'], first_name: result['first_name'], last_name: result['last_name'], admin: result['admin'])
+        new(result.transform_keys(&:to_sym))
       end
     rescue PG::Error => error
       puts "Error occurred while fetching user by username: #{error.message}"

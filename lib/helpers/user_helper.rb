@@ -1,5 +1,5 @@
 class UserHelper
-  def self.parseUsername
+  def self.parse_username
     username = nil;
     loop do
       print("Enter username : ")
@@ -15,7 +15,21 @@ class UserHelper
     username
   end
 
-  def self.parsePassword
+  def self.parse_username_login
+    username = nil;
+    loop do
+      print("Enter username : ")
+      username = gets.chomp.strip
+      if username.empty?
+        puts "Username cannot be left empty. Please try again."
+      else
+        break
+      end
+    end
+    username
+  end
+
+  def self.parse_password
     password = nil
     loop do
       print("Enter password : ")
@@ -26,7 +40,7 @@ class UserHelper
     password
   end
 
-  def self.parseFirstname
+  def self.parse_first_name
     first_name = nil
     loop do
       print("Enter first name : ")
@@ -37,7 +51,7 @@ class UserHelper
     first_name
   end
 
-  def self.parseLastname
+  def self.parse_last_name
     print("Enter last name (press enter to skip) : ")
     last_name = gets.chomp.strip
     last_name

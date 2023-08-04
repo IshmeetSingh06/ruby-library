@@ -13,13 +13,13 @@ class Application
   end
 
   private
-
   def display_welcome_message
     system('clear')
     puts "Welcome to the Library Management System!"
     puts "-----------------------------------------"
   end
 
+  private
   def login_or_register_menu
     choice = 0
     while choice != 3
@@ -44,16 +44,14 @@ class Application
     end
   end
 
+  private
   def login_user
     puts "Login"
     puts "-----------------------------------------"
-    print "Enter username : "
-    username = gets.chomp
-    print "Enter password : "
-    password = gets.chomp
-
+    username = UserHelper.parse_username_login
+    password = UserHelper.parse_password
     user = UserController.find_by_username(username)
-    if user && BCrypt::Password.new(user.password) == password
+    if user && user.valid_password?(password)
       puts "Login successful! Welcome, #{user.first_name}!"
       current_user = user
       if current_user.admin == 't'
@@ -66,17 +64,16 @@ class Application
     end
   end
 
+  private
   def register_user
     puts "Register"
     puts "-----------------------------------------"
-    username = UserHelper.parseUsername
-    password = UserHelper.parsePassword
-    first_name = UserHelper.parseFirstname
-    last_name = UserHelper.parseLastname
-    hashed_password = BCrypt::Password.create(password)
-
-    result = UserController.create(username: username, password: hashed_password, first_name: first_name, last_name: last_name)
-    if !result.nil?
+    username = UserHelper.parse_username
+    password = UserHelper.parse_password
+    first_name = UserHelper.parse_first_name
+    last_name = UserHelper.parse_last_name
+    result = UserController.create(username: username, password: password, first_name: first_name, last_name: last_name)
+    if result
       puts "\nRegistration successful! Welcome, #{first_name}!"
       current_user = result
       user_screen.main_menu(current_user)

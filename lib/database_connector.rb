@@ -1,5 +1,7 @@
 class DatabaseConnector
-  @@connection = nil
+  def self.connection
+    @@connection
+  end
 
   def self.connect
     begin
@@ -26,14 +28,9 @@ class DatabaseConnector
     initialize_admin_account
   end
 
-  def self.connection
-    @@connection
-  end
-
   private
-
   def self.initialize_tables
-    @@connection.exec(
+    connection.exec(
       <<~SQL
         CREATE TABLE IF NOT EXISTS users (
           id SERIAL PRIMARY KEY,
@@ -45,7 +42,7 @@ class DatabaseConnector
         );
       SQL
     )
-    @@connection.exec(
+    connection.exec(
       <<~SQL
         CREATE TABLE IF NOT EXISTS books (
           id SERIAL PRIMARY KEY,
@@ -58,7 +55,7 @@ class DatabaseConnector
         );
       SQL
     )
-    @@connection.exec(
+    connection.exec(
       <<~SQL
         CREATE TABLE IF NOT EXISTS borrow_logs (
           id SERIAL PRIMARY KEY,
@@ -71,15 +68,15 @@ class DatabaseConnector
     )
   end
 
+  private
   def self.initialize_admin_account
     return if admin_account_exists?
 
-    hashed_password = BCrypt::Password.create(ENV['LIBRARY_ADMIN_PASSWORD'])
-    UserController.create(username: ENV['LIBRARY_ADMIN_USERNAME'], password: hashed_password, first_name: 'admin', admin: true)
+    UserController.create(username: ENV['LIBRARY_ADMIN_USERNAME'], password: ENV['LIBRARY_ADMIN_PASSWORD'], first_name: 'admin', admin: true)
   end
 
+  private
   def self.admin_account_exists?
     result = UserController.find_by_username(ENV['LIBRARY_ADMIN_USERNAME'])
-    result.admin
   end
 end

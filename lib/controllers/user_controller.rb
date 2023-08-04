@@ -4,9 +4,10 @@ class UserController
   end
 
   def self.create(user_data)
-    # doubt here
-    user = User.new(user_data)
-    user.save
-    user
+    User.new(user_data).save
+  end
+
+  def self.update(new_user_data)
+    User.new(new_user_data).save
   end
 end

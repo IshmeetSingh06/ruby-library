@@ -54,7 +54,7 @@ class Application
     if user && user.valid_password?(password)
       puts "Login successful! Welcome, #{user.first_name}!"
       current_user = user
-      if current_user.admin == 't'
+      if current_user.admin?
         admin_screen.admin_menu(current_user)
       else
         user_screen.main_menu(current_user)
@@ -72,7 +72,12 @@ class Application
     password = UserHelper.parse_password
     first_name = UserHelper.parse_first_name
     last_name = UserHelper.parse_last_name
-    result = UserController.create(username: username, password: password, first_name: first_name, last_name: last_name)
+    result = UserController.create(
+      username: username,
+      password: password,
+      first_name: first_name,
+      last_name: last_name
+    )
     if result
       puts "\nRegistration successful! Welcome, #{first_name}!"
       current_user = result

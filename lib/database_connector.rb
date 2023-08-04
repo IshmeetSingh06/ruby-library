@@ -72,7 +72,12 @@ class DatabaseConnector
   def self.initialize_admin_account
     return if admin_account_exists?
 
-    UserController.create(username: ENV['LIBRARY_ADMIN_USERNAME'], password: ENV['LIBRARY_ADMIN_PASSWORD'], first_name: 'admin', admin: true)
+    UserController.create(
+      username: ENV['LIBRARY_ADMIN_USERNAME'],
+      password: ENV['LIBRARY_ADMIN_PASSWORD'],
+      first_name: 'admin',
+      admin: true
+    )
   end
 
   private

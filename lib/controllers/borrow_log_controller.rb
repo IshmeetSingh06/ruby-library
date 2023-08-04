@@ -4,7 +4,7 @@ class BorrowLogController
   end
 
   def self.create(borrow_log)
-    BorrowLog.new(borrow_log).create
+    BorrowLog.new(borrow_log).save
   end
 
   def self.return(log)

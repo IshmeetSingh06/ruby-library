@@ -1,12 +1,6 @@
 class AdminScreen
   attr_accessor :current_user
 
-  def display_admin_message
-    system('clear')
-    puts "Welcome #{current_user.username}"
-    puts "-----------------------------------------"
-  end
-
   def admin_menu(current_user)
     self.current_user = current_user
     display_admin_message
@@ -46,25 +40,35 @@ class AdminScreen
     end
   end
 
+  private
+  def display_admin_message
+    system('clear')
+    puts "Welcome #{current_user.username}"
+    puts "-----------------------------------------"
+  end
+
+  private
   def add_new_book
     puts "Add a New Book"
     puts "-----------------------------------------"
-    title = BookHelper.parseTitle
-    genre = BookHelper.parseGenre
-    author = BookHelper.parseAuthor
-    publish_date = BookHelper.parsePublishdate
-    count = BookHelper.parseCount
+    title = BookHelper.parse_title
+    genre = BookHelper.parse_genre
+    author = BookHelper.parse_author
+    publish_date = BookHelper.parse_publish_date
+    count = BookHelper.parse_count
     BookController.create(title: title, genre: genre, author: author, publish_date: publish_date, count: count)
     puts "New book '#{title}' has been added to the inventory."
     puts "Press enter to go back to the admin menu."
     gets
+    system('clear')
   end
 
+  private
   def restock_book
     puts "Restock a Book"
     puts "-----------------------------------------"
     print "Enter the id of the book you want to restock : "
-    book_id = BookHelper.parseBookid
+    book_id = BookHelper.parse_book_id
     book = BookController.find_by_id(book_id)
     if book.nil?
       puts "Book with ID #{book_id} not found."
@@ -81,13 +85,15 @@ class AdminScreen
     end
     puts "Press enter to go back to the admin menu."
     gets
+    system('clear')
   end
 
+  private
   def soft_delete_book
     puts "Delete a Book"
     puts "-----------------------------------------"
     print "Enter the id of the book you want to delete : "
-    book_id = BookHelper.parseBookid
+    book_id = BookHelper.parse_book_id
     book = BookController.find_by_id(book_id)
     if book.nil?
       puts "Book with ID #{book_id} not found."
@@ -97,23 +103,26 @@ class AdminScreen
     end
     puts "Press enter to go back to the admin menu."
     gets
+    system('clear')
   end
 
+  private
   def show_all_books
     puts "Available Books : "
     books = BookController.list_inventory
     if books.empty?
       puts "No books available in the inventory."
     else
-      puts "----------------------------------------------------------------"
-      puts "ID\tTitle\tGenre\tAuthor\tPublish-Date\tCount"
-      puts "----------------------------------------------------------------"
+      puts "-" * 85
+      puts sprintf("%-5s%-20s%-20s%-20s%-15s%-5s", "ID", "TITLE", "GENRE", "AUTHOR", "PUBLISH DATE", "COUNT")
+      puts "-" * 85
       books.each do |book|
-        puts "#{book.id}\t#{book.title}\t#{book.genre}\t#{book.author}\t#{book.publish_date}\t#{book.count}"
+        puts sprintf("%-5s%-20s%-20s%-20s%-15s%-5s", book.id, book.title, book.genre, book.author, book.publish_date, book.count)
       end
-      puts "----------------------------------------------------------------"
+      puts "-" * 85
     end
     puts "Press enter to go back to the main menu."
     gets
+    system('clear')
   end
 end

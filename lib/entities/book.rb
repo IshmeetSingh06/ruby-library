@@ -12,16 +12,15 @@ class Book < BaseEntity
 
   def create
     begin
-      @@db.exec_params('INSERT INTO books (title, genre, author, publish_date, count) VALUES ($1, $2, $3, $4, $5) RETURNING *;', [title, genre, author, publish_date, count])
+      BaseEntity.db.exec_params('INSERT INTO books (title, genre, author, publish_date, count) VALUES ($1, $2, $3, $4, $5);', [title, genre, author, publish_date, count])
     rescue PG::Error => e
       puts "Error occurred while creating book: #{e.message}"
-      nil
     end
   end
 
   def self.list_available
     begin
-      result = @@db.exec('SELECT * FROM books WHERE count > 0 AND NOT deleted;')
+      result = BaseEntity.db.exec('SELECT * FROM books WHERE count > 0 AND NOT deleted;')
       books_array = []
       result.each do |row|
         book_data = {
@@ -32,7 +31,7 @@ class Book < BaseEntity
           publish_date: row['publish_date'],
           count: row['count']
         }
-        books_array << Book.new(book_data)
+        books_array << new(book_data)
       end
       books_array
     rescue PG::Error => e
@@ -43,9 +42,9 @@ class Book < BaseEntity
 
   def self.find_by_id(book_id)
     begin
-      result = @@db.exec_params('SELECT * FROM books WHERE id = $1 AND NOT deleted;', [book_id]).first
+      result = BaseEntity.db.exec_params('SELECT * FROM books WHERE id = $1 AND NOT deleted;', [book_id]).first
       if result
-        Book.new(id: result['id'], title: result['title'], gener: result['genre'], author: result['author'], publish_date: result['publish_date'], count: result['count'])
+        new(result.transform_keys(&:to_sym))
       end
     rescue PG::Error => e
       puts "Error occurred while fetching book by ID: #{e.message}"
@@ -54,18 +53,11 @@ class Book < BaseEntity
 
   def self.list_inventory
     begin
-      result = @@db.exec('SELECT * FROM books WHERE NOT deleted;')
+      result = BaseEntity.db.exec('SELECT * FROM books WHERE NOT deleted;')
       books_array = []
       result.each do |row|
-        book_data = {
-          id: row['id'],
-          title: row['title'],
-          genre: row['genre'],
-          author: row['author'],
-          publish_date: row['publish_date'],
-          count: row['count']
-        }
-        books_array << Book.new(book_data)
+        book_data = row.transform_keys(&:to_sym)
+        books_array << new(book_data)
       end
       books_array
     rescue PG::Error => e
@@ -76,7 +68,7 @@ class Book < BaseEntity
 
   def restock(book_id, new_count)
     begin
-      @@db.exec_params('UPDATE books SET count = $1 WHERE id = $2 RETURNING *;', [new_count, book_id])
+      BaseEntity.db.exec_params('UPDATE books SET count = $1 WHERE id = $2 RETURNING *;', [new_count, book_id])
     rescue PG::Error => e
       puts "Error occurred while restocking book: #{e.message}"
     end
@@ -84,7 +76,7 @@ class Book < BaseEntity
 
   def self.delete(book_id)
     begin
-      @@db.exec_params('UPDATE books SET deleted = true WHERE id = $1 RETURNING *;', [book_id])
+      BaseEntity.db.exec_params('UPDATE books SET deleted = true WHERE id = $1 RETURNING *;', [book_id])
     rescue PG::Error => e
       puts "Error occurred while soft deleting book: #{e.message}"
     end

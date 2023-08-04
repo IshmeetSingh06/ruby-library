@@ -1,5 +1,5 @@
 class BookHelper
-  def self.parseTitle
+  def self.parse_title
     title = nil
     loop do
       print("Enter title : ")
@@ -10,7 +10,7 @@ class BookHelper
     title
   end
 
-  def self.parseGenre
+  def self.parse_genre
     genre = nil
     loop do
       print("Enter genre : ")
@@ -21,7 +21,7 @@ class BookHelper
     genre
   end
 
-  def self.parseAuthor
+  def self.parse_author
     author = nil
     loop do
       print("Enter author : ")
@@ -32,7 +32,7 @@ class BookHelper
     author
   end
 
-  def self.parsePublishdate
+  def self.parse_publish_date
     publish_date = nil
     loop do
       print("Enter publish date (dd/mm/yyy) : ")
@@ -47,7 +47,7 @@ class BookHelper
     publish_date
   end
 
-  def self.parseCount
+  def self.parse_count
     count = 0
     loop do
       print("Enter count : ")
@@ -58,7 +58,7 @@ class BookHelper
     count
   end
 
-  def self.parseBookid
+  def self.parse_book_id
     book_id = 0
     loop do
       print("Enter the id of the book you want to restock : ")

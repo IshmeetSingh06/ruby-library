@@ -7,8 +7,8 @@ The Library Management System is a command-line application that allows users to
 Follow these steps to set up the Library Management System on your local machine:
 
 1. Clone the repository:
-- git clone https://github.com/your-username/library-management-system.git
-- cd library-management-system
+- git clone https://github.com/IshmeetSingh06/ruby-library.git
+- cd ruby-library
 
 2. Install dependencies:
 - bundle install
@@ -17,10 +17,11 @@ Follow these steps to set up the Library Management System on your local machine
 - Create a `.env` file in the project root directory.
 - Add the necessary environment variables for your database configuration. For example:
   ```
-  DATABASE_HOST=localhost
   DATABASE_USERNAME=your_database_username
   DATABASE_PASSWORD=your_database_password
-  DATABASE_NAME=library_management_system_development
+  DATABASE_PORT=your_database_port
+  LIBRARY_ADMIN_USERNAME=library_admin_username
+  LIBRARY_ADMIN_PASSWROD=library_admin_password
   ```
 
 5. Run the application:

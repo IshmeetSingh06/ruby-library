@@ -3,7 +3,7 @@ require_relative '../spec_helper.rb'
 describe User do
   let(:user_data) {
     {
-      id: 4,
+      id: 5,
       username: 'admin@library',
       password: '$2a$12$zYF1VyZnuxgn1aH4wem11OAMPiJQv3yim/MnKq1Pr8RQtfUN3Mvbq',
       first_name: 'admin',

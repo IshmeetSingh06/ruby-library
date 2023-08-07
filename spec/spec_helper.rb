@@ -2,6 +2,7 @@ require 'rspec'
 require 'pg'
 require 'bcrypt'
 require 'dotenv/load'
+require 'simplecov'
 require_relative '../lib/database_connector'
 require_relative '../lib/entities/base_entity'
 require_relative '../lib/entities/user'
@@ -20,3 +21,4 @@ RSpec.configure do |config|
     DatabaseConnector.connect
   end
 end
+SimpleCov.start

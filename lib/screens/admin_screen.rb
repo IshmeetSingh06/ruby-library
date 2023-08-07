@@ -42,7 +42,7 @@ class AdminScreen
 
   private
   def display_admin_message
-    # system('clear')
+    system('clear')
     puts "Welcome #{current_user.username}"
     puts "-----------------------------------------"
   end

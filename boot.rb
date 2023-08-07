@@ -15,8 +15,11 @@ require 'dotenv/load'
 require 'pg'
 require 'date'
 require 'bcrypt'
+require 'rspec'
+require 'simplecov'
 
 DatabaseConnector.connect
 app = Application.new
 
+SimpleCov.start
 app.start

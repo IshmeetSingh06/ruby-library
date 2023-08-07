@@ -6,20 +6,28 @@ class DatabaseConnector
   def self.connect
     begin
       @@connection ||= PG.connect(
+        dbname: ENV['DATABASE_NAME'],
+        user: ENV['DATABASE_USERNAME'],
+        password: ENV['DATABASE_PASSWORD'],
+        port: ENV['DATABASE_PORT']
+      )
+      puts "Successfully connected to #{ENV['DATABASE_NAME']}"
+    rescue PG::ConnectionBad => error
+      puts "Database '#{ENV['DATABASE_NAME']}' does not exist. Creating..."
+      initial_connection = PG.connect(
         dbname: 'postgres',
         user: ENV['DATABASE_USERNAME'],
         password: ENV['DATABASE_PASSWORD'],
         port: ENV['DATABASE_PORT']
       )
-    rescue PG::ConnectionBad => error
-      puts "An error occurred while connecting to postgres :\n #{error.message}"
-      exit(1)
+      initial_connection.exec("CREATE DATABASE #{ENV['DATABASE_NAME']}")
+      initial_connection.close
+      puts "Database succesfully created please restart the application!"
+      connect
     rescue PG::ServerError => error
       puts "Server Error :\n #{error.message}"
       puts "Exiting the application.................."
       exit(1)
-    else
-      puts "Successfully connected to postgres"
     ensure
       puts "-----------------------------------------"
     end

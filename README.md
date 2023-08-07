@@ -54,11 +54,11 @@ The test results and code coverage report will be available in the `coverage` di
 
 ## Dependencies
 
-- Ruby (version X.X.X)
-- PostgreSQL (version X.X.X)
-- Bundler (version X.X.X)
-- RSpec (version X.X.X)
-- SimpleCov (version X.X.X)
+- Ruby
+- PostgreSQL
+- Bundler
+- RSpec
+- SimpleCov
 - pg (PostgreSQL gem)
 - dotenv (gem for managing environment variables)
 

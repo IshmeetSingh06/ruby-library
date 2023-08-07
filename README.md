@@ -17,6 +17,7 @@ Follow these steps to set up the Library Management System on your local machine
 - Create a `.env` file in the project root directory.
 - Add the necessary environment variables for your database configuration. For example:
   ```
+  DATABASE_NAME=your_database_name
   DATABASE_USERNAME=your_database_username
   DATABASE_PASSWORD=your_database_password
   DATABASE_PORT=your_database_port

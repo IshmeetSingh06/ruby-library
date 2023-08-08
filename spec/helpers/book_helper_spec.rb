@@ -1,6 +1,10 @@
 require_relative '../spec_helper.rb'
 
 describe BookHelper do
+  before(:each) do
+    DatabaseConnector.clear_tables
+  end
+
   describe '.parse_title' do
     it 'returns a valid title' do
       allow(BookHelper).to receive(:gets).and_return("Book Title\n")

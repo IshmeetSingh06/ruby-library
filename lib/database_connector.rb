@@ -37,9 +37,9 @@ class DatabaseConnector
   end
 
   def self.clear_tables
+    connection.exec('DELETE FROM borrow_logs;')
     connection.exec('DELETE FROM users;')
     connection.exec('DELETE FROM books;')
-    connection.exec('DELETE FROM borrow_logs;')
   end
 
   private

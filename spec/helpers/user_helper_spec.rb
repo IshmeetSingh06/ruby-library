@@ -1,6 +1,10 @@
 require_relative '../spec_helper.rb'
 
 describe UserHelper do
+  before(:each) do
+    DatabaseConnector.clear_tables
+  end
+
   describe '.parse_username' do
     it 'returns a valid username if user does not exist' do
       allow(UserHelper).to receive(:gets).and_return("new_username\n")

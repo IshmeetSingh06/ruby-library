@@ -57,17 +57,17 @@ class Book < BaseEntity
   def save
     begin
       if id.nil?
-        BaseEntity.db.exec_params(
-          'INSERT INTO books (title, genre, author, publish_date, count) VALUES ($1, $2, $3, $4, $5);',
+        result = BaseEntity.db.exec_params(
+          'INSERT INTO books (title, genre, author, publish_date, count) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
           [title, genre, author, publish_date, count]
         )
       else
-        BaseEntity.db.exec_params(
-          'UPDATE books SET title = $1, genre = $2, author = $3, publish_date = $4, count = $5 WHERE id = $6;',
+        result = BaseEntity.db.exec_params(
+          'UPDATE books SET title = $1, genre = $2, author = $3, publish_date = $4, count = $5 WHERE id = $6 RETURNING *;',
           [title, genre, author, publish_date, count, id]
         )
       end
-      self
+      Book.new(result.first.transform_keys(&:to_sym))
     rescue PG::Error=> e
       puts "Error occurred while updating book: #{e.message}"
     end

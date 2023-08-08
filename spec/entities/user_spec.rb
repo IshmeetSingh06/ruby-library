@@ -1,7 +1,7 @@
 require_relative '../spec_helper.rb'
 
 describe User do
-  let(:user_data) {
+  let(:admin_data) do
     {
       id: 5,
       username: 'admin@library',
@@ -9,11 +9,21 @@ describe User do
       first_name: 'admin',
       admin: 't',
     }
-  }
+  end
+
+  let(:user_data) do
+    {
+      id: 5,
+      username: 'test@user',
+      password: '$2a$12$zYF1VyZnuxgn1aH4wem11OAMPiJQv3yim/MnKq1Pr8RQtfUN3Mvbq',
+      first_name: 'admin',
+      admin: 'f',
+    }
+  end
 
   describe '#admin?' do
     it 'returns true for an admin user' do
-      user = User.new(user_data)
+      user = User.new(admin_data)
       expect(user.admin?).to be true
     end
 

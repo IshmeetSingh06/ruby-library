@@ -1,16 +1,26 @@
 require_relative '../spec_helper.rb'
 
 describe Book do
-  let(:book_data) {
+  let(:book_data) do
     {
-      id: 4,
-      title: 'third',
-      genre: 'dsa',
-      author: 'sada',
-      publish_date: '2000-09-20',
-      count: 62
+      id: 1,
+      title: 'First',
+      genre: 'fantasy',
+      author: 'ishmeet',
+      publish_date: '2000-09-06',
+      count: 22
     }
-  }
+  end
+
+  let(:new_book_data) do
+    {
+      title: 'Fifth',
+      genre: 'fantasy',
+      author: 'ishmeet',
+      publish_date: '2000-09-06',
+      count: 18
+    }
+  end
 
   describe '.list_available' do
     it 'returns available books in the inventory' do
@@ -28,7 +38,6 @@ describe Book do
   describe '.find_by_id' do
     it 'returns a book for an existing ID' do
       book = Book.new(book_data)
-      book.save
       found_book = Book.find_by_id(book.id)
       expect(found_book).to_not be_nil
       expect(found_book.title).to eq(book_data[:title])
@@ -55,13 +64,14 @@ describe Book do
 
   describe '#save' do
     it 'creates a new book and saves to the database' do
-      book = Book.new(book_data)
+      book = Book.new(new_book_data)
       expect { book.save }.to change { Book.find_by_id(book.id) }
     end
 
     it 'updates an existing book and saves to the database' do
-      book = Book.new(book_data)
-      updated_book_data = book_data.merge(count: 15)
+      new_book_data = book_data.merge(id: 4)
+      book = Book.new(new_book_data)
+      updated_book_data = new_book_data.merge(count: 15)
       updated_book = Book.new(updated_book_data)
       expect { updated_book.save }.to change { Book.find_by_id(book.id) }
       expect(Book.find_by_id(book.id).count.to_i).to eq(15)

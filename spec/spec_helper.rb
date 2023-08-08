@@ -6,7 +6,8 @@ end
 require 'rspec'
 require 'pg'
 require 'bcrypt'
-require 'dotenv/load'
+require 'dotenv'
+Dotenv.load('.env.test')
 require_relative '../lib/database_connector'
 require_relative '../lib/entities/base_entity'
 require_relative '../lib/entities/user'

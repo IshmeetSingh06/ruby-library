@@ -65,7 +65,7 @@ describe Book do
   describe '#save' do
     it 'creates a new book and saves to the database' do
       book = Book.new(new_book_data)
-      expect { book.save }.to change { Book.find_by_id(book.id) }
+      expect { book.save }.to change { Book.find_by_id(book.save.id) }
     end
 
     it 'updates an existing book and saves to the database' do

@@ -12,17 +12,17 @@ class BorrowLog < BaseEntity
   def save
     begin
       if id.nil?
-        BaseEntity.db.exec_params(
-          'INSERT INTO borrow_logs (user_id, book_id, borrow_time, return_time) VALUES ($1, $2, $3, $4);',
+        result = BaseEntity.db.exec_params(
+          'INSERT INTO borrow_logs (user_id, book_id, borrow_time, return_time) VALUES ($1, $2, $3, $4) RETURNING *;',
           [user_id, book_id, borrow_time, return_time]
         )
       else
-        BaseEntity.db.exec_params(
-          'UPDATE borrow_logs SET user_id = $1, book_id = $2, borrow_time = $3, return_time = $4 WHERE id = $5;',
+        result = BaseEntity.db.exec_params(
+          'UPDATE borrow_logs SET user_id = $1, book_id = $2, borrow_time = $3, return_time = $4 WHERE id = $5 RETURNING *;',
           [user_id, book_id, borrow_time, return_time, id]
         )
       end
-      self
+      BorrowLog.new(result.first.transform_keys(&:to_sym))
     rescue PG::Error=> e
       puts "Error occurred while creating/updating book: #{e.message}"
     end

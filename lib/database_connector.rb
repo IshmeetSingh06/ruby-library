@@ -1,9 +1,11 @@
 class DatabaseConnector
-  attr_accessor :conn
+  def self.connection
+    @@connection
+  end
 
-  def initialize
+  def self.connect
     begin
-      self.conn = PG.connect(
+      @@connection ||= PG.connect(
         dbname: 'postgres',
         user: ENV['DATABASE_USERNAME'],
         password: ENV['DATABASE_PASSWORD'],
@@ -26,8 +28,9 @@ class DatabaseConnector
     initialize_admin_account
   end
 
-  private def initialize_tables
-    self.conn.exec(
+  private
+  def self.initialize_tables
+    connection.exec(
       <<~SQL
         CREATE TABLE IF NOT EXISTS users (
           id SERIAL PRIMARY KEY,
@@ -39,19 +42,20 @@ class DatabaseConnector
         );
       SQL
     )
-    self.conn.exec(
+    connection.exec(
       <<~SQL
         CREATE TABLE IF NOT EXISTS books (
           id SERIAL PRIMARY KEY,
           title VARCHAR NOT NULL,
           genre VARCHAR NOT NULL,
           author VARCHAR NOT NULL,
-          publish_date DATE NOT NULL,
-          count INTEGER NOT NULL
+          publish_date DATE,
+          count INTEGER NOT NULL,
+          deleted BOOLEAN DEFAULT false
         );
       SQL
     )
-    self.conn.exec(
+    connection.exec(
       <<~SQL
         CREATE TABLE IF NOT EXISTS borrow_logs (
           id SERIAL PRIMARY KEY,
@@ -64,19 +68,15 @@ class DatabaseConnector
     )
   end
 
-  private def initialize_admin_account
+  private
+  def self.initialize_admin_account
     return if admin_account_exists?
 
-    hashed_password = BCrypt::Password.create(ENV['LIBRARY_ADMIN_PASSWORD'])
-
-    @conn.exec_params(
-      'INSERT INTO users (username, password, first_name, admin) VALUES ($1, $2, $3, $4)',
-      [ENV['LIBRARY_ADMIN_USERNAME'], hashed_password, 'admin', true]
-    )
+    UserController.create(username: ENV['LIBRARY_ADMIN_USERNAME'], password: ENV['LIBRARY_ADMIN_PASSWORD'], first_name: 'admin', admin: true)
   end
 
-  private def admin_account_exists?
-    result = self.conn.exec_params('SELECT admin FROM users WHERE username = $1',[ENV['LIBRARY_ADMIN_USERNAME']])
-    result[0]['admin']
+  private
+  def self.admin_account_exists?
+    result = UserController.find_by_username(ENV['LIBRARY_ADMIN_USERNAME'])
   end
 end

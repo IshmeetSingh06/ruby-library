@@ -36,6 +36,12 @@ class DatabaseConnector
     initialize_admin_account
   end
 
+  def self.clear_tables
+    connection.exec('DELETE FROM borrow_logs;')
+    connection.exec('DELETE FROM users;')
+    connection.exec('DELETE FROM books;')
+  end
+
   private
   def self.initialize_tables
     connection.exec(

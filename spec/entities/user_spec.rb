@@ -1,62 +1,67 @@
 require_relative '../spec_helper.rb'
 
 describe User do
-  let(:user_data) {
-    {
-      id: 5,
-      username: 'admin@library',
-      password: '$2a$12$zYF1VyZnuxgn1aH4wem11OAMPiJQv3yim/MnKq1Pr8RQtfUN3Mvbq',
-      first_name: 'admin',
-      admin: 't',
-    }
-  }
+  before(:each) do
+    DatabaseConnector.clear_tables
+    @user = User.new(
+      username: 'hello',
+      password: 'hello',
+      first_name: 'hello',
+      admin: true,
+    ).save
+  end
 
   describe '#admin?' do
     it 'returns true for an admin user' do
-      user = User.new(user_data)
-      expect(user.admin?).to be true
+      expect(@user.admin?).to be true
     end
 
     it 'returns false for a non-admin user' do
-      user = User.new(user_data)
+      user = User.new(
+        username: 'hello',
+        password: 'hello',
+        first_name: 'hello',
+        admin: false,
+      )
       expect(user.admin?).to be false
     end
   end
 
   describe '#valid_password?' do
-    let(:user) { User.new(user_data) }
-
     it 'returns true for a correct password' do
-      expect(user.valid_password?('admin@123')).to be true
+      expect(@user.valid_password?('hello')).to be true
     end
 
     it 'returns false for an incorrect password' do
-      expect(user.valid_password?('wrong_password')).to be false
+      expect(@user.valid_password?('wrong_password')).to be false
     end
   end
 
   describe '#save' do
     it 'creates a new user and saves to the database' do
-      user = User.new(user_data)
-      user.password = 'admin@123'
-      expect { user.save }.to change { User.find_by_username(user_data[:username]) }
+      user = User.new(
+        username: 'hello2',
+        password: 'hello',
+        first_name: 'hello',
+        admin: true,
+      )
+      expect { user.save }.to change { User.find_by_username(user.username) }
     end
 
     it 'updates an existing user and saves to the database' do
-      user = User.new(user_data)
-      user.last_name = "updates-last-name"
-      user.password = 'admin@123'
-      user.admin = true
-      expect { user.save }.to change { User.find_by_username(user_data[:username]) }
-      expect(User.find_by_username(user_data[:username]).last_name).to eq('updates-last-name')
+      @user.last_name = "updates-last-name"
+      @user.password = 'new-password'
+      @user.admin = true
+      expect { @user.save }.to change { User.find_by_username(@user.username) }
+      expect(User.find_by_username(@user.username).last_name).to eq('updates-last-name')
     end
   end
 
   describe '.find_by_username' do
     it 'returns a user for an existing username' do
-      found_user = User.find_by_username(user_data[:username])
+      found_user = User.find_by_username('hello')
       expect(found_user).to_not be_nil
-      expect(found_user.username).to eq(user_data[:username])
+      expect(found_user.username).to eq('hello')
     end
 
     it 'returns nil for a non-existing username' do

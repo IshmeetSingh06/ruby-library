@@ -1,8 +1,8 @@
 class User < BaseEntity
-  attr_accessor :id, :username, :password, :first_name, :last_name, :admin
+  attr_reader :id
+  attr_accessor :username, :password, :first_name, :last_name, :admin
 
   def initialize(user_data)
-    self.id = user_data[:id]
     self.username = user_data[:username]
     self.password = user_data[:password]
     self.first_name = user_data[:first_name]
@@ -21,19 +21,10 @@ class User < BaseEntity
   def save
     begin
       hashed_password = BCrypt::Password.create(password)
-      if id.nil?
-        result = BaseEntity.db.exec_params(
-          'INSERT INTO users (username, password, first_name, last_name, admin) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
-          [username, hashed_password, first_name, last_name, admin]
-        )
-      else
-        result = BaseEntity.db.exec_params('UPDATE users SET username = $1, password = $2, first_name = $3, last_name = $4 WHERE id = $5 RETURNING *;',
-          [username, hashed_password, first_name, last_name, id]
-        )
-      end
-      User.new(result.first.transform_keys(&:to_sym))
+      BaseEntity.db.exec_params('INSERT INTO users (username, password, first_name, last_name, admin) VALUES ($1, $2, $3, $4, $5);', [username, hashed_password, first_name, last_name, false])
+      self
     rescue PG::Error => error
-      puts "Error occurred while creating/updating user: #{error.message}"
+      puts "Error occurred while creating user: #{error.message}"
     end
   end
 

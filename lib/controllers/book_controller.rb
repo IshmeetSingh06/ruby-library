@@ -12,15 +12,14 @@ class BookController
   end
 
   def self.create(book_data)
-    Book.new(book_data).save
+    Book.new(book_data).create
   end
 
   def self.restock(book, new_count)
-    book.count = new_count
-    book.save
+    book.restock(new_count, book.id)
   end
 
-  def self.soft_delete(book)
-    book.delete
+  def self.soft_delete(book_id)
+    Book.delete(book_id)
   end
 end

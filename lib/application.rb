@@ -1,10 +1,9 @@
 class Application
-  attr_accessor :current_user, :admin_screen, :user_screen
+  attr_accessor :current_user, :admin_screen
 
   def initialize
     self.current_user = nil
     self.admin_screen = AdminScreen.new
-    self.user_screen = UserScreen.new
   end
 
   def start
@@ -54,10 +53,10 @@ class Application
     if user && user.valid_password?(password)
       puts "Login successful! Welcome, #{user.first_name}!"
       current_user = user
-      if current_user.admin?
+      if current_user.admin
         admin_screen.admin_menu(current_user)
       else
-        user_screen.main_menu(current_user)
+        main_menu
       end
     else
       puts "Invalid username or password. Please try again."
@@ -72,19 +71,15 @@ class Application
     password = UserHelper.parse_password
     first_name = UserHelper.parse_first_name
     last_name = UserHelper.parse_last_name
-    result = UserController.create(
-      username: username,
-      password: password,
-      first_name: first_name,
-      last_name: last_name
-    )
+    result = UserController.create(username: username, password: password, first_name: first_name, last_name: last_name)
     if result
       puts "\nRegistration successful! Welcome, #{first_name}!"
-      current_user = result
-      user_screen.main_menu(current_user)
-    else
-      puts "Registration failed, exiting the program"
-      exit(1)
+      current_user = {
+        id: result['id'],
+        username: result['username'],
+      }
     end
+    # TODO: Implement menu for normal user
+    main_menu
   end
 end

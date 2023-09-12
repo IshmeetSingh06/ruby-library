@@ -6,7 +6,7 @@ class AdminScreen
     display_admin_message
     choice = 0
     while choice != 6
-      puts "ADMIN MENU"
+      puts "Admin Menu"
       puts "-----------------------------------------"
       puts "1. Add a New Book"
       puts "2. Restock a Book"
@@ -49,31 +49,26 @@ class AdminScreen
 
   private
   def add_new_book
-    puts "ADD A NEW BOOK"
+    puts "Add a New Book"
     puts "-----------------------------------------"
     title = BookHelper.parse_title
     genre = BookHelper.parse_genre
     author = BookHelper.parse_author
     publish_date = BookHelper.parse_publish_date
     count = BookHelper.parse_count
-    BookController.create(
-      title: title,
-      genre: genre,
-      author: author,
-      publish_date: publish_date,
-      count: count
-    )
+    BookController.create(title: title, genre: genre, author: author, publish_date: publish_date, count: count)
     puts "New book '#{title}' has been added to the inventory."
     puts "Press enter to go back to the admin menu."
     gets
-    display_admin_message
+    system('clear')
   end
 
   private
   def restock_book
-    puts "RETSOCK A BOOK"
+    puts "Restock a Book"
     puts "-----------------------------------------"
-    book_id = BookHelper.parse_book_id('restock')
+    print "Enter the id of the book you want to restock : "
+    book_id = BookHelper.parse_book_id
     book = BookController.find_by_id(book_id)
     if book.nil?
       puts "Book with ID #{book_id} not found."
@@ -90,49 +85,44 @@ class AdminScreen
     end
     puts "Press enter to go back to the admin menu."
     gets
-    display_admin_message
+    system('clear')
   end
 
   private
   def soft_delete_book
-    puts "DELETE A BOOK"
+    puts "Delete a Book"
     puts "-----------------------------------------"
-    book_id = BookHelper.parse_book_id('delete')
+    print "Enter the id of the book you want to delete : "
+    book_id = BookHelper.parse_book_id
     book = BookController.find_by_id(book_id)
     if book.nil?
       puts "Book with ID #{book_id} not found."
     else
-      BookController.soft_delete(book)
+      BookController.soft_delete(book_id)
       puts "Book '#{book.title}' has been soft deleted."
     end
     puts "Press enter to go back to the admin menu."
     gets
-    display_admin_message
+    system('clear')
   end
 
   private
   def show_all_books
-    puts "AVAILABLE BOOKS : "
+    puts "Available Books : "
     books = BookController.list_inventory
     if books.empty?
       puts "No books available in the inventory."
     else
       puts "-" * 85
-      puts sprintf(
-        "%-5s%-20s%-20s%-20s%-15s%-5s",
-        "ID", "TITLE", "GENRE", "AUTHOR", "PUBLISH DATE", "COUNT"
-      )
+      puts sprintf("%-5s%-20s%-20s%-20s%-15s%-5s", "ID", "TITLE", "GENRE", "AUTHOR", "PUBLISH DATE", "COUNT")
       puts "-" * 85
       books.each do |book|
-        puts sprintf(
-          "%-5s%-20s%-20s%-20s%-15s%-5s",
-          book.id, book.title, book.genre, book.author, book.publish_date, book.count
-        )
+        puts sprintf("%-5s%-20s%-20s%-20s%-15s%-5s", book.id, book.title, book.genre, book.author, book.publish_date, book.count)
       end
       puts "-" * 85
     end
     puts "Press enter to go back to the main menu."
     gets
-    display_admin_message
+    system('clear')
   end
 end

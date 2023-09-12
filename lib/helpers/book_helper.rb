@@ -58,10 +58,10 @@ class BookHelper
     count
   end
 
-  def self.parse_book_id(prompt)
+  def self.parse_book_id
     book_id = 0
     loop do
-      print("Enter the id of the book you want to #{prompt} : ")
+      print("Enter the id of the book you want to restock : ")
       book_id = gets.chomp.to_i
       break unless book_id < 0
       puts "Id invalid or empty. Please try again."
